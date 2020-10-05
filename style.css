@@ -1,0 +1,67 @@
+:root {
+    /* These variables represent the theme of the application. Also when you define variables in the :root pseudo class, they can
+     be used through all of your css classes.
+     You can always overwrite the value of these variables in lower classes too.
+
+     The custom properties of css are aka variables.*/
+    font-size: 16px;
+    font-family: 'Open Sans';
+    --text-primary: #b6b6b6;
+    --text-secondary: #ececec;
+    --bg-primary: #23232e;
+    --bg-secondary: #141418;
+}
+
+body {
+    color: black;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+/* I define some margin-left for main element, so navbar doesn't overlap the main element.
+
+rem is relative to the font-size of the root element. In the past, we set the font-size of the root element to 16px. So
+each rem is 16px.
+So the font-size of root element is equal to 1rem.*/
+main {
+    margin-left: 5rem;
+    padding: 1rem;
+}
+
+/* How customize the browser scrollbar on different elements?
+We can style that scrollbar by targeting the ::-webkit-scrollbar for changing the width of the scrollbar
+on the element we want to style it's scrollbar's width. So ::webkit-scrollbar is for styling the width of element's scrollbar.
+In this case we want to style the entire scrollbar of page, so we target the body element.
+
+We use ::-webkit-scrollbar-track to change the background of track of element's scrollbar.
+
+and we can use to style the thumb which moves along of scrollbar's track.
+Remember: You can see all of these styles and the scrollbar itself, if the element actually HAVE a scrollbar!*/
+body::-webkit-scrollbar {
+    width: .25rem;
+}
+
+body::-webkit-scrollbar-track {
+    background: #1e1e24;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #6649b8;
+}
+
+nav {
+/* First we need to make it fill the available space that we have in the left side. For doing that, we know in the past, we
+set the margin-left of main element to 5rem, therefore, we can give the width of nav element, 5rem to fill the entire width of
+that place. Also notice that by doing this, the text of main and nav element won't stick to each other, because we also gave the
+main element some padding.
+
+vh and vw will react accordingly, if the user changes the size of the browser window.
+TODO till 4:05*/
+    width: 5rem;
+    height: 100vh;
+    position: fixed;
+    background-color: var(--bg-primary);
+}
+
+
