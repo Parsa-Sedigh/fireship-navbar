@@ -10,6 +10,7 @@
     --text-secondary: #ececec;
     --bg-primary: #23232e;
     --bg-secondary: #141418;
+    --transition-speed: 600ms;
 }
 
 body {
@@ -50,18 +51,242 @@ body::-webkit-scrollbar-thumb {
     background: #6649b8;
 }
 
-nav {
+.navbar {
 /* First we need to make it fill the available space that we have in the left side. For doing that, we know in the past, we
 set the margin-left of main element to 5rem, therefore, we can give the width of nav element, 5rem to fill the entire width of
 that place. Also notice that by doing this, the text of main and nav element won't stick to each other, because we also gave the
 main element some padding.
 
 vh and vw will react accordingly, if the user changes the size of the browser window.
-TODO till 4:05*/
-    width: 5rem;
-    height: 100vh;
+
+Also I commented out these 2 props because currently they are default values for this class for all of the screen sizes, no matter
+it's a small screen or big screen and that's not good! So let's put them in an appropriate @media query.*/
+    /*width: 5rem;*/
+    /*height: 100vh;*/
     position: fixed;
     background-color: var(--bg-primary);
+    transition: width 250ms ease;
+}
+
+.navbar__nav {
+    list-style: none;
+
+    /* Remove the default padding and margin of <ul> element.
+
+    By default, display: flex will create a row, but we want a column, so we changed the flex-direction to column. When you have
+    a column with flexbox, the cross-axis runs horizontally and you can align the flex items in the middle of column, using
+    align-items: center;
+    Right now, items are on the each other but we want our last flex-item to be pushed to very bottom of the column. So we can
+    acheive that in flexbox, by using margin-<left ...>: auto; but in this case, since we have a column and we want that item to
+    be pushed to very bottom, we must use margin-top for that item we want to push it to very bottom. */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navbar__item {
+    width: 100%;
+}
+
+.navbar__item:last-child {
+    margin-top: auto;
+}
+
+.navbar__link {
+    /* We have each nav__link which contains some text along with a svg graphic a row and we want to treat that nav__link as a row,
+    so we give it a display: flex; and we know the default flex-direction of a display: flex; is row. That means the cross axis
+    runs vertically. So in this case by using align-items: center, the items would be center in the middle of y-axis(or in this case,
+    the main axis) of the row. Also I gave it height of 5rem because we want to make it a square because it also has a width of
+    5rem currently(because it's parent which is .navbar__item , has a width of 100% and also there is no reason that preventing this
+    class to doesn't inherit that 5rem from it's parent), so it would become square shape. Also for text of the links, we only want to
+    show that text if the user hovers on this class or in other words, hovers over <a> and when user not hovers on it,
+    we only want to show the icon. So let's set the display of link__text to none. */
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    filter: grayscale(100%) opacity(.7);
+    transition: var(--transition-speed);
+}
+
+.navbar__link-text {
+    display: none;
+    margin-left: 1rem;
+}
+
+.navbar__link svg {
+    /* If you don't set a width for svg in this case, it would have 0 width. */
+    width: 2rem;
+    min-width: 2rem;
+
+    /* We set an equal margin-right and left for this class, in order to make it horizontally in the center of it's parent.
+    You can also set it's margin-right and left to auto, but in that case the browser will calculate an equal margin for both
+    right and left of the class.
+    Also 1.5rem is not accidental value. Because the width of this svg is 2rem and 2 + 1.5 + 1.5 = 5 which is equal to width of the
+    navbar__link , so we calculated an equal margin-left and right for this svg in order to center it horizontally inside it's parent.
+    */
+    margin: 0 1.5rem;
+}
+
+/* Currently we have a static navbar, but we want that navbar to animated out from the left, when we hover over it.
+Sounds hard but we can do it by targeting hover pseudo class on the navbar and also make the navbar bigger when we hover over it and
+also when the navbar is hovered, we want to show the link text.
+
+After that, we need to animate that hover action on the navbar. So let's set a transition on the normal state of navbar so when we
+hover over it or when other actions on it happens, it takes some time and we can do other things in that transition property of
+normal state of that class.
+In that transition prop, we are saying on the transition of states of that class, we want to animate the transition of width prop
+of that class.
+
+Right now, by setting color prop in navbar__link to a gray color(--text-primary) and by setting the color of .fa-primary and
+.fa-secondary to pink colors, the text(or in better words, anything other than graphics would be gray. Because we kinda override the
+grayscale() prop in .fa-primary and .fa-secondary to pink colors, if you didn't use color pros in .fa-... , the whole elements inside
+of . navbar__link would have grayscale(100%), but we don't want that. We want the text of links to gray and the graphics, pink.) of link
+would be gray and the graphics would be pink.
+
+After that, let's add a transition on svg graphics too, so let's make them light up, when we hover over them. But before that,
+let's use fontawsome's fa-primary and fa-secondary classes which was set on the <path> elements of icons. So let's target .fa-primary
+and .fa-secondary and give them some color and then add transition prop on both of normal states of those classes in order to
+when state of those classes change, like when we hover on those classes and the state of them changed, the color of those classes
+change in animated way.
+Currently it looks like all of our links are active because we specify their pink colors on normal state of them, we can also hard code
+some different colors there too, but the easier way is to use filter() on the .nav__link in order to make the inactive links gray.
+So instead of giving the active link some pink colors, we gave all of those links pinks colors and then make the inactive links gray.
+This may not work in any situation: We can set filter: grayscale(100%); which will turn the default pink color(or any other color) that
+we set for our .nav__link into gray color with equal brightness and then we reduce the opacity a little bit and also we can use
+hue-rotate() and brightness() and ... too.
+I also set a transition prop in normal state of .nav__link to animate that filter() (animating a prop means when the state of that
+class changes, the props that we specify in transition prop which is in normal state of that class, would also change but in an
+animated way. So in that case, when the state of .nav__link changes, the transition of filter() would be animated too and wouldn't
+happen suddenly.).
+
+Now when a .nav__link is hovered over, we want to remove the filter prop from .nav__link . So let's add .nav__link:hover and there,
+we we set the value of grayscale() back to 0% and opacity back to 1 .
+Notice that when we hover over .navbar__link , we didn't set the pink colors on graphics because they have that color by default BUT we
+set a grayscale() on the wrapper element of them and that grayscale() make the child elements of that element, get that grayscale() ,
+even if those child elements have their own color properties.
+So by setting a grayscale() on the parent element of a child, the color related stuff of that child would affected by grayscale() we
+set on it's parent even if that child has it's own color related stuff and also notice that setting a color prop on parent of those
+childes, won't affect the color related stuff of those childes, but setting grayscale() on the parent will do that effect!*/
+.navbar:hover {
+    /* I take this prop out and take it to the related @media query.
+    width: 16rem;*/
+}
+
+/* I took these inside their appropriate @media query.
+.navbar:hover .navbar__link-text {*/
+/*    display: block;*/
+/*}*/
+
+/* In this 2 classes of fontawesome, we are setting the colors of graphics. */
+.fa-primary {color: #ff7eee;}
+
+.fa-secondary {color: #df49a6;}
+
+.fa-primary, .fa-secondary {
+    transition: var(--transition-speed);
+}
+
+.navbar__link:hover {
+    filter: grayscale(0%) opacity(1);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.navbar__logo {
+    /* To make it looks like a logo, we make that text bold, upper case and give the characters a little bit more of space between
+     each of them, by using letter-spacing prop.
+
+    Learn: So letter-spacing is for space between each character. */
+    width: 100%;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: .3ch;
+}
+
+/* For animating the svg graphic of .navbar__logo , for doing that, in normal state of svg of logo, we set the rotate(0deg) because
+ in normal state of the logo svg, we want it to be 0deg rotated from it's original orientation. So we set it's rotate to 0deg and
+ also we want to change that rotate() value, in other states of that svg like hover state, so we need to animate that transition from
+ normal state to hover state. In order to animate that transition, we set the transition prop in normal state of this class and
+ for the prop we want to animate it's transition, we use transform prop, because we actually want to animate that prop.
+ In other words, the transition: transform var(--transition-speed); says: we want to animate the transform prop or in other words,
+ we want to animate the value of transform prop, whenever the value of transform(the value of prop we used in transition prop) changes.
+
+ We change the value of rotation of svg of logo, whenever the user hovers over navbar from 0deg(which was set in normal state of
+ .navbar__logo), to -180deg in order to rotate it counter-clockwise.
+
+ So negative value in rotate() means: counter-clockwise.*/
+.navbar__logo svg {
+    transform: rotate(0deg);
+    transition: transform var(--transition-speed);
+}
+
+.navbar:hover .navbar__logo svg {
+    transform: rotate(-180deg);
+}
+
+/* A media query allows you to target certain css styles based on the size of screen or the screen orientation and other factors.
+Any css property inside this @media query will only applied to screens that have size under than 600px.
+
+For this media query, I want to take navbar to bottom of the page and make it stick to there horizontally and take all of the
+viewport width there, so let's set width: 100vw; . Here, I just swap the width and height of .navbar . Because on larger screens than
+this media query, the width of .navbar is 5rem and it's height is 100vh but in smaller screens like this media query, the width of
+.navbar is 100vw and it's height is 5rem . But still the flex container is treating it's items in a column but we want the navbar to
+be like a row. But first let's remove the logo by setting it's display to none, because the logo was taking too much space.
+Then we set the .navbar__nav flex-direction prop to row. Now we can center those items(links) along the main axis by
+setting justify-content to center and also I want to remove the margin we set for main element in all of the screens(because that prop
+was outside of any @media query so it was applied for all of the screens).
+Small screens:*/
+@media only screen and (max-width: 600px) {
+    .navbar {
+        bottom: 0;
+        width: 100vw;
+        height: 5rem;
+    }
+
+    .navbar__logo {
+        display: none;
+    }
+
+    .navbar__nav {
+        flex-direction: row;
+    }
+
+    .navbar__link {
+        justify-content: center;
+    }
+
+    main {
+        margin-left: 0;
+    }
+}
+
+/* Large screens:
+For this, let's go to .navbar and take out the height and width props there and we will put those values inside this @media query,
+instead of setting them as a default value for all of the screen sizes, which we were doing that, before writing this @media query.
+Also let's take out the size related stuff for the :hover state of .navbar and also .navbar__link-text*/
+@media only screen and (min-width: 600px) {
+    .navbar {
+        width: 5rem;
+        height: 100vh;
+    }
+
+    .navbar:hover {
+        width: 16rem;
+    }
+
+    .navbar:hover .navbar__link-text {
+        display: inline;
+        transition: opacity var(--transition-speed);
+    }
 }
 
 
